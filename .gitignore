@@ -1,6 +1,8 @@
 # Prerequisites
 *.d
 
+jtetris
+
 # Object files
 *.o
 *.ko
