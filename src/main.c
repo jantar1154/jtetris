@@ -1,12 +1,6 @@
-#include <SDL2/SDL.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-
+#include "input.h"
 #include "dynamic_array.h"
-
-#define WINDOW_WIDTH 768
-#define WINDOW_HEIGHT 576
+#include "main.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;
@@ -15,33 +9,7 @@ Uint64 last;
 double delta_time;
 float internal_clock;
 long rng_seed = 12421421;
-
-// SETTINGS
-// OG Tetris has 10Hx20W tiles
-#define TILE_W 10
-#define TILE_H 20
-#define TILE_SIZE 28
-#define OFFSET_X 80
-#define OFFSET_Y 10
-
-typedef struct {
-    int top_row[4];
-    int bot_row[4];
-} layout;
-
-typedef struct {
-    int active; // `0` - inactive, `1` - active
-    int pos_x, pos_y;
-    // Position (in number of tiles) relative to the top left corner
-    // of parent tetromino
-    int rel_x, rel_y;
-    SDL_Colour colour;
-} tetro_tile;
-
-typedef struct {
-    tetro_tile tiles[8];
-    float pos_x, pos_y;
-} tetromino;
+int ff = 0; // Fast forward
 
 tetromino * tet; // A tetromino that is currenty falling
 
@@ -113,7 +81,7 @@ void init_tetro_tiles(tetromino * tet) {
             str_to_row("01110001", lo);
             break;
         case 3:
-            str_to_row("11111111", lo);
+            str_to_row("00001111", lo);
             break;
         default:
             err("Invalid random at tetro tile initialisation");
@@ -126,7 +94,7 @@ void init_tetro_tiles(tetromino * tet) {
         tile->pos_x = tet->pos_x + (i * TILE_SIZE);
         tile->pos_y = tet->pos_y;
         tile->rel_x = i-1;
-        tile->rel_y = 0;
+        tile->rel_y = 1;
     }
     // Bottom row
     for (int i = 0; i < 4; ++i) {
@@ -135,7 +103,7 @@ void init_tetro_tiles(tetromino * tet) {
         tile->pos_x = tet->pos_x + (i * TILE_SIZE);
         tile->pos_y = tet->pos_y + TILE_SIZE;
         tile->rel_x = i-1;
-        tile->rel_y = 1;
+        tile->rel_y = 0;
     }
 
     SDL_Colour rand_col;
@@ -151,15 +119,25 @@ void init_tetro_tiles(tetromino * tet) {
     free(lo);
 }
 
+// Refreshes positions of tiles in `tetromino`
+void update_tetro_tiles(tetromino * t) {
+    for (int i = 0 ; i < 8; ++i) {
+        tetro_tile * tile = &t->tiles[i];
+        tile->pos_x = t->pos_x + tile->rel_x * TILE_SIZE;
+        tile->pos_y = t->pos_y + tile->rel_y * TILE_SIZE;
+    }
+}
+
 // Creates and initialises a new tetromino and places it into the top center
 void spawn_tetromino() {
     // Free because there was a memory leak after spawning more
     // than one tetrmino
     free(tet);
     tet = malloc(sizeof(tetromino));
-    tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-2));
+    tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
     tet->pos_y = OFFSET_Y;
     init_tetro_tiles(tet);
+    update_tetro_tiles(tet);
 }
 
 // Initialisations
@@ -193,15 +171,6 @@ void init() {
     // init `game_field`
     init_game_field();
     spawn_tetromino();
-}
-
-// Refreshes positions of tiles in `tetromino`
-void update_tetro_tiles(tetromino * t) {
-    for (int i = 0 ; i < 8; ++i) {
-        tetro_tile * tile = &t->tiles[i];
-        tile->pos_x = t->pos_x + tile->rel_x * TILE_SIZE;
-        tile->pos_y = t->pos_y + tile->rel_y * TILE_SIZE;
-    }
 }
 
 // finds `game_tile` from `field` located on the same position as `t_tile`
@@ -276,7 +245,7 @@ void check_collision() {
 void update() {
     internal_clock += delta_time;
     // call two times every second
-    if (internal_clock > 0.5f) {
+    if (internal_clock > 0.5f || ff) {
         internal_clock = 0;
         move_tetromino(tet, 0, 1);
         check_collision();
@@ -310,11 +279,11 @@ void render_tiles() {
 }
 
 // Renders currently falling tetromino
-void render_tetromino(tetromino * tet) {
+void render_tetromino(tetromino * t) {
     SDL_Rect rect;
     // Top tiles
     for (int i = 0; i < 8; ++i) {
-        tetro_tile * tile = &tet->tiles[i];
+        tetro_tile * tile = &t->tiles[i];
         if (!tile->active) continue;
         SDL_Colour * c = &tile->colour;
         rect.x = tile->pos_x;
@@ -351,45 +320,16 @@ void calc_delta() {
     last = now;
 }
 
-// Rotates tetromino 90 degrees clockwise
-void rotate_tetromino() {
+// Rotates tetromino 90 degrees
+void rotate_tetromino(tetromino * t) {
     for (int i = 0; i < 8; ++i) {
-        tetro_tile * tile = &tet->tiles[i];
-        int old_x = tile->rel_x;
-        tile->rel_x = tile->rel_y;
-        tile->rel_y = old_x;
+        tetro_tile * tile = &t->tiles[i];
+        int old_y = tile->rel_y;
+        tile->rel_y = tile->rel_x;
+        tile->rel_x = 1-old_y;
     }
     update_tetro_tiles(tet);
     render_tetromino(tet);
-}
-
-// Handles events
-void handle_input(SDL_Event * e, int * quit) {
-    switch (e->type) {
-        // Handle quitting the program
-        case SDL_QUIT:
-            *quit = 1;
-            break;
-        case SDL_KEYDOWN:
-            switch (e->key.keysym.sym) {
-                case SDLK_q:
-                    *quit = 1;
-                    break;
-                case SDLK_UP:
-                    rotate_tetromino();
-                    break;
-                case SDLK_LEFT:
-                case SDLK_a:
-                    move_tetromino(tet, -1, 0);
-                    break;
-                case SDLK_RIGHT:
-                case SDLK_d:
-                    move_tetromino(tet, 1, 0);
-                    break;
-            }
-            render_tetromino(tet);
-            break;
-    }
 }
 
 // Frees up everything allocated on the heap
@@ -404,10 +344,11 @@ int main () {
     init();
 
     int quit = 0;
-    render_tetromino(tet);
+
     // Game loop
     while (!quit) {
-        while (SDL_PollEvent(&event)) handle_input(&event, &quit);
+        while (SDL_PollEvent(&event))
+            handle_input(tet, &event, &quit, &ff);
         calc_delta();
         update();
         render();
