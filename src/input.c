@@ -28,7 +28,6 @@ void handle_input(tetromino * t, SDL_Event * e, int * quit, int * ff) {
                     *ff = 1;
                     break;
             }
-            render_tetromino(t);
             break;
         case SDL_KEYUP:
             switch (e->key.keysym.sym) {

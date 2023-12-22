@@ -37,9 +37,19 @@ typedef struct {
     float pos_x, pos_y;
 } tetromino;
 
-void rotate_tetromino(tetromino * t);
+typedef struct {
+    int pos_x, pos_y;
+    // Bool, if there is a `tetro_tile` baked into this `game_tile`
+    int has_tetro_tile;
+    tetro_tile tetromino_tile;
+} game_tile;
 
-void render_tetromino(tetromino * t);
+// An array of tiles
+typedef struct {
+    game_tile tile_arr[TILE_H][TILE_W];
+} game_field;
+
+void rotate_tetromino(tetromino * t);
 
 void move_tetromino(tetromino * t, int x_offset, int y_offset);
 

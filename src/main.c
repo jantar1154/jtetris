@@ -1,5 +1,6 @@
 #include "main.h"
 #include "input.h"
+#include "render.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;
@@ -13,17 +14,6 @@ int ff = 0; // Fast forward
 
 tetromino * tet; // A tetromino that is currenty falling
 
-typedef struct {
-    int pos_x, pos_y;
-    // Bool, if there is a `tetro_tile` baked into this `game_tile`
-    int has_tetro_tile;
-    tetro_tile tetromino_tile;
-} game_tile;
-
-// An array of tiles
-typedef struct {
-    game_tile tile_arr[TILE_H][TILE_W];
-} game_field;
 game_field field;
 
 // Prints `message` to `stdout` and exits with code `1`
@@ -252,51 +242,6 @@ void update() {
     }
 }
 
-// Renders tile borders and `game_tile`s
-void render_tiles() {
-    for (int y = 0; y < TILE_H; ++y) {
-        for (int x = 0; x < TILE_W; ++x) {
-            SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-            game_tile * tile = &field.tile_arr[y][x];
-            SDL_Rect rect = {
-                .x = tile->pos_x,
-                .y = tile->pos_y,
-                .w = TILE_SIZE,
-                .h = TILE_SIZE
-            };
-            SDL_RenderDrawRect(renderer, &rect);
-
-            if (!tile->has_tetro_tile) continue;
-            SDL_Colour * c = &tile->tetromino_tile.colour;
-            // Base colour
-            SDL_SetRenderDrawColor(renderer, c->r, c->g, c->b, c->a);
-            SDL_RenderFillRect(renderer, &rect);
-            // Borders
-            SDL_SetRenderDrawColor(renderer, c->r/3, c->g/3, c->b/3, c->a/3);
-            SDL_RenderDrawRect(renderer, &rect);
-        }
-    }
-}
-
-// Renders currently falling tetromino
-void render_tetromino(tetromino * t) {
-    SDL_Rect rect;
-    // Top tiles
-    for (int i = 0; i < 8; ++i) {
-        tetro_tile * tile = &t->tiles[i];
-        if (!tile->active) continue;
-        SDL_Colour * c = &tile->colour;
-        rect.x = tile->pos_x;
-        rect.y = tile->pos_y;
-        rect.h = rect.w = TILE_SIZE;
-        SDL_SetRenderDrawColor(renderer, c->r, c->g, c->b, c->a);
-        SDL_RenderFillRect(renderer, &rect);
-        // Draw outline
-        SDL_SetRenderDrawColor(renderer, c->r/3, c->g/3, c->b/3, c->a);
-        SDL_RenderDrawRect(renderer, &rect);
-    }
-}
-
 // Runs every frame, handles ONLY graphics
 void render() {
     // Clear screen
@@ -304,10 +249,10 @@ void render() {
     SDL_RenderClear(renderer);
 
     // Render tile borders and tiles
-    render_tiles();
+    render_field(renderer, &field);
 
     // Render all tiles in tetromino
-    render_tetromino(tet);
+    render_tetromino(renderer, tet);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
@@ -329,7 +274,7 @@ void rotate_tetromino(tetromino * t) {
         tile->rel_x = 1-old_y;
     }
     update_tetro_tiles(tet);
-    render_tetromino(tet);
+    render_tetromino(renderer, tet);
 }
 
 // Frees up everything allocated on the heap
