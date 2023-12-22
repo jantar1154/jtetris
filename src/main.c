@@ -1,10 +1,10 @@
-#include "input.h"
-#include "dynamic_array.h"
 #include "main.h"
+#include "input.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;
 SDL_Event event;
+
 Uint64 last;
 double delta_time;
 float internal_clock;
