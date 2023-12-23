@@ -1,6 +1,18 @@
 #include "render.h"
 #include "tetromino.h"
 
+// Converts `char *` to values to be put to `bot_row` and `top_row`
+void str_to_row(const char str[8], layout * lo) {
+    // Top row
+    for (int i = 0; i < 4; ++i) {
+        lo->top_row[i] = str[i] - '0';
+    }
+    // Bottom row
+    for (int i = 0; i < 4; ++i) {
+        lo->bot_row[i] = str[4+i] - '0';
+    }
+}
+
 // finds `game_tile` from `field` located on the same position as `t_tile`
 game_tile * get_gtile(game_field * f, tetro_tile * t_tile, int x_offset, int y_offset) {
     if (!t_tile->active) return 0;
@@ -16,6 +28,57 @@ game_tile * get_gtile(game_field * f, tetro_tile * t_tile, int x_offset, int y_o
     return 0;
 }
 
+// Chooses a random layout for the tetromino tiles
+// TODO: make more layouts
+void init_tetro_tiles(tetromino * tet) {
+    layout * lo = malloc(sizeof(layout));
+    switch (rnd(0, 3)) {
+        case 0:
+            str_to_row("01100110", lo);
+            break;
+        case 1:
+            str_to_row("11101000", lo);
+            break;
+        case 2:
+            str_to_row("01110001", lo);
+            break;
+        case 3:
+            str_to_row("00001111", lo);
+            break;
+    }
+    // Set active tiles based on values in `lo`
+    // Top row
+    for (int i = 0; i < 4; ++i) {
+        tetro_tile * tile = &tet->tiles[i];
+        tile->active = lo->top_row[i];
+        tile->pos_x = tet->pos_x + (i * TILE_SIZE);
+        tile->pos_y = tet->pos_y;
+        tile->rel_x = i-1;
+        tile->rel_y = 1;
+    }
+    // Bottom row
+    for (int i = 0; i < 4; ++i) {
+        tetro_tile * tile = &tet->tiles[i+4];
+        tile->active = lo->bot_row[i];
+        tile->pos_x = tet->pos_x + (i * TILE_SIZE);
+        tile->pos_y = tet->pos_y + TILE_SIZE;
+        tile->rel_x = i-1;
+        tile->rel_y = 0;
+    }
+
+    SDL_Colour rand_col;
+    rand_col.r = rnd(50,255);
+    rand_col.g = rnd(50,255);
+    rand_col.b = rnd(50,255);
+
+    for (int i = 0; i < 8; ++i) {
+        tetro_tile * tile = &tet->tiles[i];
+        memcpy(&tile->colour, &rand_col, sizeof(SDL_Colour));
+        tile->colour.a = 255;
+    }
+    free(lo);
+}
+
 // Refreshes positions of tiles in `tetromino`
 void update_tetro_tiles(tetromino * t) {
     for (int i = 0 ; i < 8; ++i) {
@@ -26,7 +89,28 @@ void update_tetro_tiles(tetromino * t) {
 }
 
 // Rotates tetromino 90 degrees
-void rotate_tetromino(SDL_Renderer * r, tetromino * t) {
+void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t) {
+    tetromino temp;
+    memcpy(&temp, t, sizeof(tetromino));
+    // Creates a temporary rotated tetromino and checks if it there is an
+    // obstacle, otherwise rotates `t`.
+    for (int i = 0; i < 8; ++i) {
+        tetro_tile * tile = &temp.tiles[i];
+        int old_y = tile->rel_y;
+        tile->rel_y = tile->rel_x;
+        tile->rel_x = 1-old_y;
+        update_tetro_tiles(&temp);
+
+        // Check for baked tiles
+        game_tile * gt = get_gtile(f, tile, 0, 0);
+        if (gt && gt->has_tetro_tile) return;
+
+        // Check for edges
+        if (tile->pos_x >= OFFSET_X + TILE_W * TILE_SIZE) return;
+        if (tile->pos_y >= OFFSET_Y + TILE_H * TILE_SIZE) return;
+        if (tile->pos_x <= OFFSET_X+1) return;
+    }
+
     for (int i = 0; i < 8; ++i) {
         tetro_tile * tile = &t->tiles[i];
         int old_y = tile->rel_y;

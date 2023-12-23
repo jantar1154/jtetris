@@ -49,4 +49,6 @@ typedef struct {
     game_tile tile_arr[TILE_H][TILE_W];
 } game_field;
 
+int rnd(const int from, const int to);
+
 #endif // MAIN_H

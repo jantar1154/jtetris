@@ -20,7 +20,7 @@ int * ff) {
                     *quit = 1;
                     break;
                 case SDLK_UP:
-                    rotate_tetromino(r, t);
+                    rotate_tetromino(r, f, t);
                     break;
                 case SDLK_LEFT:
                 case SDLK_a:
