@@ -49,6 +49,4 @@ typedef struct {
     game_tile tile_arr[TILE_H][TILE_W];
 } game_field;
 
-void move_tetromino(tetromino * t, int x_offset, int y_offset);
-
 #endif // MAIN_H

@@ -152,50 +152,12 @@ void init() {
     spawn_tetromino();
 }
 
-// finds `game_tile` from `field` located on the same position as `t_tile`
-game_tile * get_gtile(tetro_tile * t_tile, int x_offset, int y_offset) {
-    if (!t_tile->active) return 0;
-    for (int y = 0; y < TILE_H; ++y) {
-        for (int x = 0; x < TILE_W; ++x) {
-            game_tile * curr_g_tile = &field.tile_arr[y][x];
-            if (curr_g_tile->pos_y == t_tile->pos_y+TILE_SIZE*y_offset &&
-                curr_g_tile->pos_x == t_tile->pos_x+TILE_SIZE*x_offset) {
-                return curr_g_tile;
-            }
-        }
-    }
-    return 0;
-}
-// Moves tetromino
-void move_tetromino(tetromino * t, int x_offset, int y_offset) {
-    y_offset *= TILE_SIZE;
-    x_offset *= TILE_SIZE;
-
-    // Iterates through every tile in `t` until it sees obstacle
-    // And stops tetromino from moving towards the obstacle
-    for (int i = 0; i < 8; ++i) {
-        tetro_tile * tile = &t->tiles[i];
-        game_tile * gt = get_gtile(tile, x_offset/TILE_SIZE, 0);
-        if (!tile->active) continue;
-        if (gt && gt->has_tetro_tile) x_offset = 0;
-        if (tile->pos_x + x_offset >= OFFSET_X + TILE_W*TILE_SIZE) {
-            x_offset = 0;
-        } else if (tile->pos_x + x_offset <= OFFSET_X - TILE_SIZE) {
-            x_offset = 0;
-        }
-    }
-
-    t->pos_y += y_offset;
-    t->pos_x += x_offset;
-    update_tetro_tiles(t);
-}
-
 // Transfers tiles from tetromino into `game_field`,
 // deletes tetromino, runs check for filled row
 void bake_tiles() {
     for (int i = 0; i < 8; ++i) {
         tetro_tile * current_tile = &tet->tiles[i];
-        game_tile * gtile = get_gtile(current_tile, 0, 0);
+        game_tile * gtile = get_gtile(&field, current_tile, 0, 0);
         if (!gtile) continue; 
         gtile->has_tetro_tile = 1;
         memcpy(&gtile->tetromino_tile, current_tile, sizeof(tetro_tile));
@@ -209,7 +171,7 @@ void check_collision() {
     // if there is a baked tile or bottom of play field
     for (int i = 0; i < 8; ++i) {
         tetro_tile * current_tile = &tet->tiles[i];
-        game_tile * gtile_under = get_gtile(current_tile, 0, 1);
+        game_tile * gtile_under = get_gtile(&field, current_tile, 0, 1);
         if (current_tile->pos_y+TILE_SIZE >= OFFSET_Y + TILE_H * TILE_SIZE) {
             bake_tiles();
             return;
@@ -226,7 +188,7 @@ void update() {
     // call two times every second
     if (internal_clock > 0.5f || ff) {
         internal_clock = 0;
-        move_tetromino(tet, 0, 1);
+        move_tetromino(&field, tet, 0, 1);
         check_collision();
     }
 }
@@ -270,7 +232,7 @@ int main () {
     // Game loop
     while (!quit) {
         while (SDL_PollEvent(&event))
-            handle_input(renderer, tet, &event, &quit, &ff);
+            handle_input(renderer, &field, tet, &event, &quit, &ff);
         calc_delta();
         update();
         render();
