@@ -1,7 +1,13 @@
+#include "tetromino.h"
+#include "render.h"
 #include "input.h"
 
 // Handles events
-void handle_input(tetromino * t, SDL_Event * e, int * quit, int * ff) {
+void handle_input(SDL_Renderer * r,
+tetromino * t,
+SDL_Event * e,
+int * quit,
+int * ff) {
     switch (e->type) {
         // Handle quitting the program
         case SDL_QUIT:
@@ -13,7 +19,7 @@ void handle_input(tetromino * t, SDL_Event * e, int * quit, int * ff) {
                     *quit = 1;
                     break;
                 case SDLK_UP:
-                    rotate_tetromino(t);
+                    rotate_tetromino(r, t);
                     break;
                 case SDLK_LEFT:
                 case SDLK_a:

@@ -1,6 +1,7 @@
 #include "main.h"
 #include "input.h"
 #include "render.h"
+#include "tetromino.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;
@@ -109,21 +110,9 @@ void init_tetro_tiles(tetromino * tet) {
     free(lo);
 }
 
-// Refreshes positions of tiles in `tetromino`
-void update_tetro_tiles(tetromino * t) {
-    for (int i = 0 ; i < 8; ++i) {
-        tetro_tile * tile = &t->tiles[i];
-        tile->pos_x = t->pos_x + tile->rel_x * TILE_SIZE;
-        tile->pos_y = t->pos_y + tile->rel_y * TILE_SIZE;
-    }
-}
-
 // Creates and initialises a new tetromino and places it into the top center
 void spawn_tetromino() {
-    // Free because there was a memory leak after spawning more
-    // than one tetrmino
-    free(tet);
-    tet = malloc(sizeof(tetromino));
+    tet = realloc(tet, sizeof(tetromino));
     tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
     tet->pos_y = OFFSET_Y;
     init_tetro_tiles(tet);
@@ -265,18 +254,6 @@ void calc_delta() {
     last = now;
 }
 
-// Rotates tetromino 90 degrees
-void rotate_tetromino(tetromino * t) {
-    for (int i = 0; i < 8; ++i) {
-        tetro_tile * tile = &t->tiles[i];
-        int old_y = tile->rel_y;
-        tile->rel_y = tile->rel_x;
-        tile->rel_x = 1-old_y;
-    }
-    update_tetro_tiles(tet);
-    render_tetromino(renderer, tet);
-}
-
 // Frees up everything allocated on the heap
 void destroy() {
     free(tet);
@@ -293,7 +270,7 @@ int main () {
     // Game loop
     while (!quit) {
         while (SDL_PollEvent(&event))
-            handle_input(tet, &event, &quit, &ff);
+            handle_input(renderer, tet, &event, &quit, &ff);
         calc_delta();
         update();
         render();

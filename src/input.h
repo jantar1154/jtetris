@@ -3,6 +3,6 @@
 
 #include "main.h"
 
-void handle_input(tetromino * tet, SDL_Event * e, int * quit, int * ff);
+void handle_input(SDL_Renderer * r, tetromino * t, SDL_Event * e, int * quit, int * ff);
 
 #endif // INPUT_H
