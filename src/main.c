@@ -1,7 +1,7 @@
-#include "main.h"
-#include "input.h"
-#include "render.h"
-#include "tetromino.h"
+#include "h/main.h"
+#include "h/input.h"
+#include "h/render.h"
+#include "h/tetromino.h"
 
 SDL_Window * window;
 SDL_Renderer * renderer;

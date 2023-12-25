@@ -1,4 +1,4 @@
-#include "render.h"
+#include "h/render.h"
 
 // Renders tile borders and `game_tile`s
 void render_field(SDL_Renderer * r, game_field * f) {

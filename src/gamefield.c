@@ -1,4 +1,4 @@
-#include "gamefield.h"
+#include "h/gamefield.h"
 
 // finds `game_tile` from `field` located on the same position as `t_tile`
 game_tile * get_gtile(
@@ -34,12 +34,12 @@ void move_tiles_down(game_field * f, const int y_limit) {
     for (int y = 1; y < y_limit+1; ++y) {
         for (int x = 0; x < TILE_W; ++x) {
             game_tile * tile = &f->tile_arr[y][x];
-            tetro_tile tet = {
+            tetro_tile tet_tile = {
                 .active = 1,
                 .pos_x = tile->pos_x,
                 .pos_y = tile->pos_y
             };
-            game_tile * tile_above = get_gtile(&temp, &tet, 0, -1);
+            game_tile * tile_above = get_gtile(&temp, &tet_tile, 0, -1);
             if (!tile_above) break;
             if (!tile_above->has_tetro_tile) continue;
             tile->has_tetro_tile = 1;
@@ -59,7 +59,6 @@ void check_filled_row(game_field * f) {
             y_vals[count] = y;
             ++count;
             y_vals = realloc(y_vals, (1+count) * sizeof(int));
-            printf("count: %i\n", count);
         }
     }
     for (int i = 0; i < count; ++i) {
