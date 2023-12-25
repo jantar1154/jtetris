@@ -87,19 +87,6 @@ void init() {
     spawn_tetromino();
 }
 
-// Transfers tiles from tetromino into `game_field`,
-// deletes tetromino, runs check for filled row
-void bake_tiles() {
-    for (int i = 0; i < 8; ++i) {
-        tetro_tile * current_tile = &tet->tiles[i];
-        game_tile * gtile = get_gtile(&field, current_tile, 0, 0);
-        if (!gtile) continue; 
-        gtile->has_tetro_tile = 1;
-        memcpy(&gtile->tetromino_tile, current_tile, sizeof(tetro_tile));
-    }
-    spawn_tetromino();
-}
-
 // Checks for obstacles under tetromino
 void check_collision() {
     // Iterate through every tile in tetromino and check
@@ -107,11 +94,14 @@ void check_collision() {
     for (int i = 0; i < 8; ++i) {
         tetro_tile * current_tile = &tet->tiles[i];
         game_tile * gtile_under = get_gtile(&field, current_tile, 0, 1);
-        if (current_tile->pos_y+TILE_SIZE >= OFFSET_Y + TILE_H * TILE_SIZE) {
-            bake_tiles();
+        if (!current_tile->active) continue;
+        if (current_tile->pos_y >= OFFSET_Y + (TILE_H-1) * TILE_SIZE) {
+            bake_tiles(tet, &field);
+            spawn_tetromino();
             return;
         } else if (gtile_under && gtile_under->has_tetro_tile) {
-            bake_tiles();
+            bake_tiles(tet, &field);
+            spawn_tetromino();
             return;
         }
     }

@@ -4,6 +4,7 @@
         "sdl_keyboard.h": "c",
         "main.h": "c",
         "input.h": "c",
-        "sdl.h": "c"
+        "sdl.h": "c",
+        "gamefield.h": "c"
     }
 }

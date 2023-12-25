@@ -1,4 +1,5 @@
 #include "render.h"
+#include "gamefield.h"
 #include "tetromino.h"
 
 // Converts `char *` to values to be put to `bot_row` and `top_row`
@@ -11,21 +12,6 @@ void str_to_row(const char str[8], layout * lo) {
     for (int i = 0; i < 4; ++i) {
         lo->bot_row[i] = str[4+i] - '0';
     }
-}
-
-// finds `game_tile` from `field` located on the same position as `t_tile`
-game_tile * get_gtile(game_field * f, tetro_tile * t_tile, int x_offset, int y_offset) {
-    if (!t_tile->active) return 0;
-    for (int y = 0; y < TILE_H; ++y) {
-        for (int x = 0; x < TILE_W; ++x) {
-            game_tile * curr_g_tile = &f->tile_arr[y][x];
-            if (curr_g_tile->pos_y == t_tile->pos_y+TILE_SIZE*y_offset &&
-                curr_g_tile->pos_x == t_tile->pos_x+TILE_SIZE*x_offset) {
-                return curr_g_tile;
-            }
-        }
-    }
-    return 0;
 }
 
 // Chooses a random layout for the tetromino tiles
@@ -143,4 +129,17 @@ void move_tetromino(game_field * f, tetromino * t, int x_offset, int y_offset) {
     t->pos_y += y_offset;
     t->pos_x += x_offset;
     update_tetro_tiles(t);
+}
+
+// Transfers tiles from tetromino into `game_field`,
+// deletes tetromino, runs check for filled row
+void bake_tiles(tetromino * t, game_field * f) {
+    for (int i = 0; i < 8; ++i) {
+        tetro_tile * current_tile = &t->tiles[i];
+        game_tile * gtile = get_gtile(f, current_tile, 0, 0);
+        if (!gtile) continue; 
+        gtile->has_tetro_tile = 1;
+        memcpy(&gtile->tetromino_tile, current_tile, sizeof(tetro_tile));
+    }
+    check_filled_row(f);
 }
