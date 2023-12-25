@@ -2,6 +2,7 @@
 *.d
 
 jtetris
+.vscode
 
 # Object files
 *.o
