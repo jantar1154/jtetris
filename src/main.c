@@ -2,16 +2,20 @@
 #include "h/input.h"
 #include "h/render.h"
 #include "h/tetromino.h"
+#include <SDL2/SDL_ttf.h>
 
 SDL_Window * window;
 SDL_Renderer * renderer;
 SDL_Event event;
+
+long game_score = 0;
 
 Uint64 last;
 double delta_time;
 float internal_clock;
 long rng_seed = 12421421;
 int ff = 0; // Fast forward
+TTF_Font * font;
 
 tetromino * tet; // A tetromino that is currenty falling
 
@@ -47,7 +51,7 @@ void init_game_field() {
 
 // Creates and initialises a new tetromino and places it into the top center
 void spawn_tetromino() {
-    tet = realloc(tet, sizeof(tetromino));
+    // tet = realloc(tet, sizeof(tetromino));
     tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
     tet->pos_y = OFFSET_Y;
     init_tetro_tiles(tet);
@@ -59,6 +63,7 @@ void init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         err("Could not initialise SDL video");
     }
+    TTF_Init();
     Uint32 window_flags =
         SDL_WINDOW_SHOWN |
         SDL_WINDOW_OPENGL
@@ -82,6 +87,15 @@ void init() {
     );
     last = SDL_GetPerformanceCounter();
     internal_clock = 0.0f;
+    tet = malloc(sizeof(tetromino));
+
+    char * path = "asset/font/impact.ttf";
+    font = TTF_OpenFont(path, 48);
+    if (!font) {
+        fprintf(stderr, "Could not load path (%s)!\n", path);
+        exit(1);
+    }
+
     // init `game_field`
     init_game_field();
     spawn_tetromino();
@@ -96,12 +110,14 @@ void check_collision() {
         game_tile * gtile_under = get_gtile(&field, current_tile, 0, 1);
         if (!current_tile->active) continue;
         if (current_tile->pos_y >= OFFSET_Y + (TILE_H-1) * TILE_SIZE) {
-            bake_tiles(tet, &field);
+            bake_tiles(&game_score, tet, &field);
             spawn_tetromino();
+            ff = 0;
             return;
         } else if (gtile_under && gtile_under->has_tetro_tile) {
-            bake_tiles(tet, &field);
+            bake_tiles(&game_score, tet, &field);
             spawn_tetromino();
+            ff = 0;
             return;
         }
     }
@@ -130,6 +146,8 @@ void render() {
     // Render all tiles in tetromino
     render_tetromino(renderer, tet);
 
+    render_score(renderer, &game_score, font);
+
     // Swap buffers
     SDL_RenderPresent(renderer);
 }
@@ -146,6 +164,7 @@ void destroy() {
     free(tet);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_Quit();
 }
 
 // MAIN

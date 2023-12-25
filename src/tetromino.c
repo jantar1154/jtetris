@@ -18,7 +18,7 @@ void str_to_row(const char str[8], layout * lo) {
 // TODO: make more layouts
 void init_tetro_tiles(tetromino * tet) {
     layout * lo = malloc(sizeof(layout));
-    switch (rnd(0, 3)) {
+    switch (rnd(0, 6)) {
         case 0:
             str_to_row("01100110", lo);
             break;
@@ -31,6 +31,14 @@ void init_tetro_tiles(tetromino * tet) {
         case 3:
             str_to_row("00001111", lo);
             break;
+        case 4:
+            str_to_row("01110010", lo);
+            break;
+        case 5:
+            str_to_row("01101100", lo);
+            break;
+        case 6:
+            str_to_row("01100011", lo);
     }
     // Set active tiles based on values in `lo`
     // Top row
@@ -133,7 +141,7 @@ void move_tetromino(game_field * f, tetromino * t, int x_offset, int y_offset) {
 
 // Transfers tiles from tetromino into `game_field`,
 // deletes tetromino, runs check for filled row
-void bake_tiles(tetromino * t, game_field * f) {
+void bake_tiles(long * sc, tetromino * t, game_field * f) {
     for (int i = 0; i < 8; ++i) {
         tetro_tile * current_tile = &t->tiles[i];
         game_tile * gtile = get_gtile(f, current_tile, 0, 0);
@@ -141,5 +149,5 @@ void bake_tiles(tetromino * t, game_field * f) {
         gtile->has_tetro_tile = 1;
         memcpy(&gtile->tetromino_tile, current_tile, sizeof(tetro_tile));
     }
-    check_filled_row(f);
+    check_filled_row(sc, f);
 }

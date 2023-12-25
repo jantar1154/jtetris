@@ -1,4 +1,6 @@
+#include "h/main.h"
 #include "h/gamefield.h"
+#include "h/score.h"
 
 // finds `game_tile` from `field` located on the same position as `t_tile`
 game_tile * get_gtile(
@@ -8,8 +10,8 @@ game_tile * get_gtile(
     for (int y = 0; y < TILE_H; ++y) {
         for (int x = 0; x < TILE_W; ++x) {
             game_tile * curr_g_tile = &f->tile_arr[y][x];
-            if (curr_g_tile->pos_y == t_tile->pos_y+TILE_SIZE*y_offset &&
-                curr_g_tile->pos_x == t_tile->pos_x+TILE_SIZE*x_offset) {
+            if (curr_g_tile->pos_y == t_tile->pos_y + TILE_SIZE*y_offset &&
+                curr_g_tile->pos_x == t_tile->pos_x + TILE_SIZE*x_offset) {
                 return curr_g_tile;
             }
         }
@@ -48,7 +50,7 @@ void move_tiles_down(game_field * f, const int y_limit) {
     }
 }
 
-void check_filled_row(game_field * f) {
+void check_filled_row(long * sc, game_field * f) {
     int count = 0;
     int * y_vals = malloc(sizeof(int));
     for (int y = 0; y < TILE_H; ++y) {
@@ -64,5 +66,6 @@ void check_filled_row(game_field * f) {
     for (int i = 0; i < count; ++i) {
         move_tiles_down(f, y_vals[i]);
     }
+    add_score(sc, 1, count);
     free(y_vals);
 }
