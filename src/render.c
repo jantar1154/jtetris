@@ -30,7 +30,7 @@ void render_field(SDL_Renderer * r, game_field * f) {
     }
 }
 
-// Renders currently falling tetromino
+// Renders tetromino
 void render_tetromino(SDL_Renderer * r, tetromino * t) {
     SDL_Rect rect;
     // Top tiles
@@ -73,7 +73,7 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     // Border rectangle
     SDL_Rect rect1 = {
         .x = OFFSET_X + TILE_W*TILE_SIZE + 10,
-        .y = OFFSET_Y + 50,
+        .y = OFFSET_Y + 150,
         .w = 380,
         .h = 50
     };

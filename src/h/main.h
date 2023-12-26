@@ -34,7 +34,7 @@ typedef struct {
 
 typedef struct {
     tetro_tile tiles[8];
-    float pos_x, pos_y;
+    int pos_x, pos_y;
 } tetromino;
 
 typedef struct {

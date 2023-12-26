@@ -18,6 +18,7 @@ int ff = 0; // Fast forward
 TTF_Font * font;
 
 tetromino * tet; // A tetromino that is currenty falling
+tetromino * next_tet; // A tetromino that is next in order
 
 game_field field;
 
@@ -51,11 +52,13 @@ void init_game_field() {
 
 // Creates and initialises a new tetromino and places it into the top center
 void spawn_tetromino() {
-    // tet = realloc(tet, sizeof(tetromino));
+    memcpy(tet, next_tet, sizeof(tetromino));
     tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
     tet->pos_y = OFFSET_Y;
-    init_tetro_tiles(tet);
     update_tetro_tiles(tet);
+    // Make new `next_tet`
+    init_tetro_tiles(next_tet);
+    update_tetro_tiles(next_tet);
 }
 
 // Initialisations
@@ -88,9 +91,15 @@ void init() {
     last = SDL_GetPerformanceCounter();
     internal_clock = 0.0f;
     tet = malloc(sizeof(tetromino));
+    next_tet = malloc(sizeof(tetromino));
+
+    next_tet->pos_y = 50;
+    next_tet->pos_x = OFFSET_X + TILE_SIZE*TILE_W + 50;
+    init_tetro_tiles(next_tet);
+    update_tetro_tiles(next_tet);
 
     char * path = "asset/font/impact.ttf";
-    font = TTF_OpenFont(path, 48);
+    font = TTF_OpenFont(path, 72);
     if (!font) {
         fprintf(stderr, "Could not load path (%s)!\n", path);
         exit(1);
@@ -151,6 +160,8 @@ void render() {
     // Render all tiles in tetromino
     render_tetromino(renderer, tet);
 
+    render_tetromino(renderer, next_tet);
+
     render_score(renderer, &game_score, font);
 
     // Swap buffers
@@ -167,6 +178,7 @@ void calc_delta() {
 // Frees up everything allocated on the heap
 void destroy() {
     free(tet);
+    free(next_tet);
     render_destroy();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
