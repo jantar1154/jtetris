@@ -96,6 +96,8 @@ void init() {
         exit(1);
     }
 
+    render_init(renderer);
+
     // init `game_field`
     init_game_field();
     spawn_tetromino();
@@ -140,6 +142,9 @@ void render() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
+    // Background image
+    render_background(renderer);
+
     // Render tile borders and tiles
     render_field(renderer, &field);
 
@@ -162,6 +167,7 @@ void calc_delta() {
 // Frees up everything allocated on the heap
 void destroy() {
     free(tet);
+    render_destroy();
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();

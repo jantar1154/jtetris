@@ -1,5 +1,8 @@
 #include "h/render.h"
 #include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+
+SDL_Texture * background_texture;
 
 // Renders tile borders and `game_tile`s
 void render_field(SDL_Renderer * r, game_field * f) {
@@ -89,4 +92,21 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     snprintf(text, 30, "%li", *score);
     rect2.x = (rect2.x + rect2.w) - 22*strlen(text) - 10; // Align right
     render_text(r, font, &clr, &rect2, text);
+}
+
+void render_background(SDL_Renderer * r) {
+    SDL_RenderCopy(r, background_texture, NULL, NULL);
+}
+
+void render_destroy() {
+    SDL_DestroyTexture(background_texture);
+}
+
+// Initialises global variables
+void render_init(SDL_Renderer * r) {
+    // Load background
+    char * bg_path = "asset/textures/background.jpeg";
+    SDL_Surface * background_surface = IMG_Load(bg_path);
+    background_texture = SDL_CreateTextureFromSurface(r, background_surface);
+    SDL_FreeSurface(background_surface);
 }

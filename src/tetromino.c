@@ -20,25 +20,26 @@ void init_tetro_tiles(tetromino * tet) {
     layout * lo = malloc(sizeof(layout));
     switch (rnd(0, 6)) {
         case 0:
-            str_to_row("01100110", lo);
+            str_to_row("01100110", lo); // Square
             break;
         case 1:
-            str_to_row("11101000", lo);
+            str_to_row("11101000", lo); // L
             break;
         case 2:
-            str_to_row("01110001", lo);
+            str_to_row("01110001", lo); // J
             break;
         case 3:
-            str_to_row("00001111", lo);
+            str_to_row("00001111", lo); // I
             break;
         case 4:
-            str_to_row("01110010", lo);
+            str_to_row("01110010", lo); // T
             break;
         case 5:
-            str_to_row("01101100", lo);
+            str_to_row("01101100", lo); // Z
             break;
         case 6:
-            str_to_row("01100011", lo);
+            str_to_row("01100011", lo); // Reverse Z
+            break;
     }
     // Set active tiles based on values in `lo`
     // Top row
