@@ -13,7 +13,7 @@ obj = $(src:$(path)/%.c=$(builddir)/%.o)
 all: $(name)
 
 $(name): $(obj)
-	gcc $(args) -o $(builddir)/$@ $^ 
+	gcc $(args) -o $@ $^ 
 
 $(builddir)/%.o: $(path)/%.c
 	mkdir -p $(builddir)

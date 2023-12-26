@@ -91,9 +91,10 @@ void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t) {
     // obstacle, otherwise rotates `t`.
     for (int i = 0; i < 8; ++i) {
         tetro_tile * tile = &temp.tiles[i];
+        if (!tile->active) continue;
         int old_y = tile->rel_y;
-        tile->rel_y = tile->rel_x;
-        tile->rel_x = old_y;
+        tile->rel_y = 3-tile->rel_x;
+        tile->rel_x = old_y+1;
         update_tetro_tiles(&temp);
 
         // Check for baked tiles
@@ -102,8 +103,8 @@ void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t) {
 
         // Check for edges
         if (tile->pos_x >= OFFSET_X + TILE_W * TILE_SIZE) return;
-        if (tile->pos_y >= OFFSET_Y + TILE_H * TILE_SIZE) return;
-        if (tile->pos_x <= OFFSET_X+1) return;
+        if (tile->pos_y > OFFSET_Y + TILE_H * TILE_SIZE) return;
+        if (tile->pos_x < OFFSET_X) return;
     }
 
     // Rotate

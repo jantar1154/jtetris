@@ -115,6 +115,7 @@ void init() {
         fprintf(stderr, "Could not load path (%s)!\n", path);
         exit(1);
     }
+    
 
     render_init(renderer);
 
