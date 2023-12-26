@@ -2,6 +2,7 @@
 *.d
 
 jtetris
+build
 .vscode
 
 # Object files

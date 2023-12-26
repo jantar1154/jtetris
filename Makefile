@@ -2,11 +2,23 @@
 # config
 opt = O0
 name = jtetris
-path = src/
+path = src
+builddir = build
 args = -std=c99 -Wall -g -lSDL2 -lSDL2_ttf -lSDL2_image -fsanitize=address
 
-build:
-	gcc $(args) -$(opt) $(path)*.c -o $(name)
+# dont touch
+src = $(wildcard $(path)/*.c)
+obj = $(src:$(path)/%.c=$(builddir)/%.o)
+
+all: $(name)
+
+$(name): $(obj)
+	gcc $(args) -o $(builddir)/$@ $^ 
+
+$(builddir)/%.o: $(path)/%.c
+	mkdir -p $(builddir)
+	gcc $(args) -o $@ -c $<
 
 clean:
-	rm $(name)
+	rm $(obj) $(name)
+	rmdir $(builddir)
