@@ -23,7 +23,7 @@ void init_tetro_tiles(tetromino * tet) {
             str_to_row("01100110", lo); // Square
             break;
         case 1:
-            str_to_row("11101000", lo); // L
+            str_to_row("01110100", lo); // L
             break;
         case 2:
             str_to_row("01110001", lo); // J
@@ -35,7 +35,7 @@ void init_tetro_tiles(tetromino * tet) {
             str_to_row("01110010", lo); // T
             break;
         case 5:
-            str_to_row("01101100", lo); // Z
+            str_to_row("00110110", lo); // Z
             break;
         case 6:
             str_to_row("01100011", lo); // Reverse Z
@@ -48,7 +48,7 @@ void init_tetro_tiles(tetromino * tet) {
         tile->active = lo->top_row[i];
         tile->pos_x = tet->pos_x + (i * TILE_SIZE);
         tile->pos_y = tet->pos_y;
-        tile->rel_x = i-1;
+        tile->rel_x = i;
         tile->rel_y = 1;
     }
     // Bottom row
@@ -57,7 +57,7 @@ void init_tetro_tiles(tetromino * tet) {
         tile->active = lo->bot_row[i];
         tile->pos_x = tet->pos_x + (i * TILE_SIZE);
         tile->pos_y = tet->pos_y + TILE_SIZE;
-        tile->rel_x = i-1;
+        tile->rel_x = i;
         tile->rel_y = 0;
     }
 
@@ -93,7 +93,7 @@ void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t) {
         tetro_tile * tile = &temp.tiles[i];
         int old_y = tile->rel_y;
         tile->rel_y = tile->rel_x;
-        tile->rel_x = 1-old_y;
+        tile->rel_x = old_y;
         update_tetro_tiles(&temp);
 
         // Check for baked tiles
@@ -106,11 +106,12 @@ void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t) {
         if (tile->pos_x <= OFFSET_X+1) return;
     }
 
+    // Rotate
     for (int i = 0; i < 8; ++i) {
         tetro_tile * tile = &t->tiles[i];
         int old_y = tile->rel_y;
-        tile->rel_y = tile->rel_x;
-        tile->rel_x = 1-old_y;
+        tile->rel_y = 3-tile->rel_x;
+        tile->rel_x = old_y+1;
     }
     update_tetro_tiles(t);
     render_tetromino(r, t);
@@ -142,7 +143,7 @@ void move_tetromino(game_field * f, tetromino * t, int x_offset, int y_offset) {
 
 // Transfers tiles from tetromino into `game_field`,
 // deletes tetromino, runs check for filled row
-void bake_tiles(long * sc, tetromino * t, game_field * f) {
+void bake_tiles(long * sc, tetromino * t, game_field * f, int * lv) {
     for (int i = 0; i < 8; ++i) {
         tetro_tile * current_tile = &t->tiles[i];
         game_tile * gtile = get_gtile(f, current_tile, 0, 0);
@@ -150,5 +151,5 @@ void bake_tiles(long * sc, tetromino * t, game_field * f) {
         gtile->has_tetro_tile = 1;
         memcpy(&gtile->tetromino_tile, current_tile, sizeof(tetro_tile));
     }
-    check_filled_row(sc, f);
+    check_filled_row(sc, f, lv);
 }

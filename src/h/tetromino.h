@@ -16,6 +16,6 @@ void rotate_tetromino(SDL_Renderer * r, game_field * f, tetromino * t);
 
 void move_tetromino(game_field * f, tetromino * t, int x_offset, int y_offset);
 
-void bake_tiles(long * sc, tetromino * t, game_field * f);
+void bake_tiles(long * sc, tetromino * t, game_field * f, int * lv);
 
 #endif // TETROMINO_H

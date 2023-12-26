@@ -30,6 +30,18 @@ void render_field(SDL_Renderer * r, game_field * f) {
     }
 }
 
+void render_next_tetromino(SDL_Renderer * r, tetromino *t) {
+    SDL_SetRenderDrawColor(r, 50, 50, 50, 255);
+    SDL_Rect rect = {
+        .x = t->pos_x - 10,
+        .y = t->pos_y - 10,
+        .h = 2*TILE_SIZE + 10,
+        .w = 4*TILE_SIZE + 10
+    };
+    SDL_RenderFillRect(r, &rect);
+    render_tetromino(r, t);
+}
+
 // Renders tetromino
 void render_tetromino(SDL_Renderer * r, tetromino * t) {
     SDL_Rect rect;

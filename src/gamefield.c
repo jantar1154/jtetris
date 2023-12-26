@@ -50,7 +50,7 @@ void move_tiles_down(game_field * f, const int y_limit) {
     }
 }
 
-void check_filled_row(long * sc, game_field * f) {
+void check_filled_row(long * sc, game_field * f, int * lv) {
     int count = 0;
     int * y_vals = malloc(sizeof(int));
     for (int y = 0; y < TILE_H; ++y) {
@@ -66,6 +66,6 @@ void check_filled_row(long * sc, game_field * f) {
     for (int i = 0; i < count; ++i) {
         move_tiles_down(f, y_vals[i]);
     }
-    add_score(sc, 1, count);
+    add_score(sc, lv, count);
     free(y_vals);
 }

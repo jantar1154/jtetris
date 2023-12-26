@@ -6,6 +6,8 @@
 
 void render_field(SDL_Renderer * r, game_field * f);
 
+void render_next_tetromino(SDL_Renderer * r, tetromino * t);
+
 void render_tetromino(SDL_Renderer * r, tetromino * t);
 
 void render_score(SDL_Renderer * r, long * score, TTF_Font * font);

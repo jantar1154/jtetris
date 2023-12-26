@@ -51,4 +51,8 @@ typedef struct {
 
 int rnd(const int from, const int to);
 
+void change_limit(float by);
+
+void add_level(void);
+
 #endif // MAIN_H

@@ -14,6 +14,7 @@ Uint64 last;
 double delta_time;
 float internal_clock;
 long rng_seed = 12421421;
+float limit = 1;
 int ff = 0; // Fast forward
 TTF_Font * font;
 
@@ -21,6 +22,16 @@ tetromino * tet; // A tetromino that is currenty falling
 tetromino * next_tet; // A tetromino that is next in order
 
 game_field field;
+
+int level = 1;
+
+void add_level(void) {
+    ++ level;
+}
+
+void change_limit(float by) {
+    limit -= by;
+}
 
 // Prints `message` to `stdout` and exits with code `1`
 void err(const char * message) {
@@ -121,12 +132,12 @@ void check_collision() {
         game_tile * gtile_under = get_gtile(&field, current_tile, 0, 1);
         if (!current_tile->active) continue;
         if (current_tile->pos_y >= OFFSET_Y + (TILE_H-1) * TILE_SIZE) {
-            bake_tiles(&game_score, tet, &field);
+            bake_tiles(&game_score, tet, &field, &level);
             spawn_tetromino();
             ff = 0;
             return;
         } else if (gtile_under && gtile_under->has_tetro_tile) {
-            bake_tiles(&game_score, tet, &field);
+            bake_tiles(&game_score, tet, &field, &level);
             spawn_tetromino();
             ff = 0;
             return;
@@ -138,7 +149,7 @@ void check_collision() {
 void update() {
     internal_clock += delta_time;
     // call two times every second
-    if (internal_clock > 0.5f || ff) {
+    if (internal_clock > limit || ff) {
         internal_clock = 0;
         move_tetromino(&field, tet, 0, 1);
         check_collision();
@@ -160,7 +171,8 @@ void render() {
     // Render all tiles in tetromino
     render_tetromino(renderer, tet);
 
-    render_tetromino(renderer, next_tet);
+    // Next tetromino
+    render_next_tetromino(renderer, next_tet);
 
     render_score(renderer, &game_score, font);
 
