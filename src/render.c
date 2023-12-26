@@ -81,6 +81,34 @@ void render_text(
     SDL_FreeSurface(s);
 }
 
+// Prints current level
+void render_level(SDL_Renderer * r, TTF_Font * font, int * lv) {
+    SDL_Rect rect1 = {
+        .x = OFFSET_X + TILE_W*TILE_SIZE + 10,
+        .y = OFFSET_Y + 220,
+        .w = 380,
+        .h = 50
+    };
+    SDL_Rect rect2 = rect1;
+
+    SDL_SetRenderDrawColor(r, 40, 40, 40, 255);
+    SDL_RenderFillRect(r, &rect1);
+    SDL_SetRenderDrawColor(r, 210, 210, 210, 255);
+    SDL_RenderDrawRect(r, &rect1);
+
+    // Text
+    SDL_Colour clr = {255, 255, 255};
+    char text[30];
+
+    rect1.x += 10;
+    snprintf(text, 30, "Level: ");
+    render_text(r, font, &clr, &rect1, text);
+
+    snprintf(text, 30, "%i", *lv);
+    rect2.x = (rect2.x + rect2.w) - 22*strlen(text) - 10; // Align right
+    render_text(r, font, &clr, &rect2, text);
+}
+
 void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     // Border rectangle
     SDL_Rect rect1 = {
@@ -90,7 +118,9 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
         .h = 50
     };
     SDL_Rect rect2 = rect1;
-    SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
+    SDL_SetRenderDrawColor(r, 40, 40, 40, 255);
+    SDL_RenderFillRect(r, &rect1);
+    SDL_SetRenderDrawColor(r, 210, 210, 210, 255);
     SDL_RenderDrawRect(r, &rect1);
 
     // Text
@@ -106,19 +136,23 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     render_text(r, font, &clr, &rect2, text);
 }
 
+// renders background image
 void render_background(SDL_Renderer * r) {
     SDL_RenderCopy(r, background_texture, NULL, NULL);
 }
 
-void render_destroy() {
+// Destroys everything allocated on heap
+void render_destroy(void) {
     SDL_DestroyTexture(background_texture);
 }
+
 
 // Initialises global variables
 void render_init(SDL_Renderer * r) {
     // Load background
     char * bg_path = "asset/textures/background.jpeg";
     SDL_Surface * background_surface = IMG_Load(bg_path);
+    if (!background_surface) return;
     background_texture = SDL_CreateTextureFromSurface(r, background_surface);
     SDL_FreeSurface(background_surface);
 }

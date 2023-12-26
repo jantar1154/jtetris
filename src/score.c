@@ -21,6 +21,6 @@ void add_score(long * score, int * level, const int rows) {
             break;
     }
     *score += *level * multiplier;
-    change_limit(0.05 * (rows/2));
+    change_limit();
     if (0 == *score % (100*(1+(int)(*level/3)))) add_level();
 }

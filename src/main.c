@@ -29,8 +29,8 @@ void add_level(void) {
     ++ level;
 }
 
-void change_limit(float by) {
-    limit -= by;
+void change_limit() {
+    limit *= 0.975;
 }
 
 // Prints `message` to `stdout` and exits with code `1`
@@ -175,6 +175,8 @@ void render() {
     render_next_tetromino(renderer, next_tet);
 
     render_score(renderer, &game_score, font);
+
+    render_level(renderer, font, &level);
 
     // Swap buffers
     SDL_RenderPresent(renderer);
