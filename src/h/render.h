@@ -22,6 +22,8 @@ void render_level(SDL_Renderer * r, TTF_Font * font, int * lv);
 
 void render_score(SDL_Renderer * r, long * score, TTF_Font * font);
 
+void render_best_score(SDL_Renderer * r, TTF_Font * f);
+
 void render_background(SDL_Renderer * r);
 
 void render_init(SDL_Renderer * r);

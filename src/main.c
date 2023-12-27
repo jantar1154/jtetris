@@ -199,6 +199,8 @@ void render() {
     // Next tetromino
     render_next_tetromino(renderer, next_tet);
 
+    render_best_score(renderer, font);
+
     render_score(renderer, &game_score, font);
 
     render_level(renderer, font, &level);

@@ -10,7 +10,7 @@ typedef struct {
 save_data * data;
 
 #define MAX_SAVES 5
-#define SAVE_PATH "save"
+#define SAVE_PATH "save.txt"
 
 // Sorts scores so that largest score is on position 1
 void sort_data(save_data * d) {
@@ -31,6 +31,15 @@ void save_print(void) {
     for (int i = 0; i < MAX_SAVES; ++i) {
         printf("[%i] %i\n", data[i].position, data[i].score);
     }
+}
+
+int * get_save_data(int * n) {
+    int * rtn = malloc(sizeof(int) * MAX_SAVES);
+    for (int i = 0; i < MAX_SAVES; ++i) {
+        rtn[i] = data[i].score;
+    }
+    *n = MAX_SAVES;
+    return rtn;
 }
 
 // Returns pointer to a smallest score in `data`

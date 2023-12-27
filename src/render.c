@@ -1,4 +1,5 @@
 #include "h/render.h"
+#include "h/save.h"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
@@ -135,6 +136,28 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     snprintf(text, 30, "%li", *score);
     rect2.x = (rect2.x + rect2.w) - 22*strlen(text) - 10; // Align right
     render_text(r, font, 22, &clr, &rect2, text);
+}
+
+void render_best_score(SDL_Renderer *r, TTF_Font * font) {
+    SDL_Rect rect = {
+        .x = OFFSET_X + TILE_SIZE*TILE_W + 5,
+        .y = OFFSET_Y + 350,
+        .h = 30,
+        .w = 220
+    };
+    SDL_SetRenderDrawColor(r, 20, 20, 20, 255);
+    SDL_RenderFillRect(r, &rect);
+    int n = 0;
+    int * save_data = get_save_data(&n);
+    SDL_Colour white = {255, 255, 255};
+    for (int i = 0; i < n; ++i) {
+        char txt[32];
+        snprintf(txt, 32, "%i", save_data[i]);
+        render_text(r, font, 25, &white, &rect, txt);
+        rect.y += 35;
+    }
+
+    free(save_data);
 }
 
 // renders background image

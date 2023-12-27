@@ -1,7 +1,7 @@
 
 # config
-opt = O0
-name = jtetris
+opt = O2
+name = tetris
 path = src
 builddir = build
 args = -std=c99 -Wall -g -lSDL2 -lSDL2_ttf -lSDL2_image -fsanitize=address
