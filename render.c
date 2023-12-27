@@ -1,5 +1,5 @@
-#include "h/render.h"
-#include "h/save.h"
+#include "render.h"
+#include "save.h"
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
@@ -174,7 +174,7 @@ void render_destroy(void) {
 // Initialises global variables
 void render_init(SDL_Renderer * r) {
     // Load background
-    char * bg_path = "asset/textures/background.jpeg";
+    char * bg_path = "background.jpeg";
     SDL_Surface * background_surface = IMG_Load(bg_path);
     if (!background_surface) return;
     background_texture = SDL_CreateTextureFromSurface(r, background_surface);

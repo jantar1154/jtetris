@@ -1,6 +1,6 @@
-#include "h/tetromino.h"
-#include "h/render.h"
-#include "h/input.h"
+#include "tetromino.h"
+#include "render.h"
+#include "input.h"
 
 // Handles events
 void handle_input(SDL_Renderer * r,

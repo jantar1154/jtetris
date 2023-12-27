@@ -15,8 +15,7 @@
 4. Pokud cokoliv chybí, `gcc` na to upozorní
 5. Hra se dá spustit příkazem `./tetris`
 # Přizpůsobení
-V hlavní složce hry se nachází složka `asset`, ve které jsou složky `font` a `textures`.
 ## Font
-Soubor ve složce `font` se dá zaměnit za jiný soubor s fontem. Důležité ale je, aby se soubor jmenovat `font.ttf` a byl typu **ttf**!
+Soubor `font.tff` se dá zaměnit za jiný soubor s fontem. Důležité ale je, aby se soubor jmenoval přesně `font.ttf` a byl typu **ttf**!
 ## Pozadí
-Pozadí ve hře se dá změnit změněním souboru `asset/textures/background.jpeg`. Jméno i typ souboru se musí shodovat.
+Pozadí ve hře se dá změnit změněním souboru `background.jpeg`. Jméno i typ souboru se musí shodovat.

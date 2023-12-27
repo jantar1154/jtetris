@@ -1,5 +1,5 @@
-#include "h/main.h"
-#include "h/render.h"
+#include "main.h"
+#include "render.h"
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_rect.h>
 

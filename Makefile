@@ -2,7 +2,7 @@
 # config
 opt = O2
 name = tetris
-path = src
+path = .
 builddir = build
 args = -std=c99 -Wall -g -lSDL2 -lSDL2_ttf -lSDL2_image -fsanitize=address
 

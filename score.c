@@ -1,5 +1,5 @@
-#include "h/score.h"
-#include "h/main.h"
+#include "score.h"
+#include "main.h"
 
 void add_score(long * score, int * level, const int rows) {
     int multiplier = 1;

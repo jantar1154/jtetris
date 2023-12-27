@@ -1,9 +1,9 @@
-#include "h/main.h"
-#include "h/input.h"
-#include "h/render.h"
-#include "h/tetromino.h"
-#include "h/menu.h"
-#include "h/save.h"
+#include "main.h"
+#include "input.h"
+#include "render.h"
+#include "tetromino.h"
+#include "menu.h"
+#include "save.h"
 #include <SDL2/SDL_ttf.h>
 
 SDL_Window * window;
@@ -130,7 +130,7 @@ void init() {
     init_tetro_tiles(next_tet);
     update_tetro_tiles(next_tet);
 
-    char * path = "asset/font/font.ttf";
+    char * path = "font.ttf";
     font = TTF_OpenFont(path, 72);
     if (!font) {
         fprintf(stderr, "Could not load path (%s)!\n", path);

@@ -1,6 +1,6 @@
-#include "h/main.h"
-#include "h/gamefield.h"
-#include "h/score.h"
+#include "main.h"
+#include "gamefield.h"
+#include "score.h"
 
 // finds `game_tile` from `field` located on the same position as `t_tile`
 game_tile * get_gtile(

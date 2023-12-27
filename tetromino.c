@@ -1,6 +1,6 @@
-#include "h/render.h"
-#include "h/gamefield.h"
-#include "h/tetromino.h"
+#include "render.h"
+#include "gamefield.h"
+#include "tetromino.h"
 
 // Converts `char *` to values to be put to `bot_row` and `top_row`
 void str_to_row(const char str[8], layout * lo) {
