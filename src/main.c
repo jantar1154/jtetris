@@ -3,6 +3,7 @@
 #include "h/render.h"
 #include "h/tetromino.h"
 #include "h/menu.h"
+#include "h/save.h"
 #include <SDL2/SDL_ttf.h>
 
 SDL_Window * window;
@@ -62,15 +63,8 @@ void init_game_field() {
     }
 }
 
-// Creates and initialises a new tetromino and places it into the top center
-void spawn_tetromino() {
-    memcpy(tet, next_tet, sizeof(tetromino));
-    tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
-    tet->pos_y = OFFSET_Y;
-    update_tetro_tiles(tet);
-    // Make new `next_tet`
-    init_tetro_tiles(next_tet);
-    update_tetro_tiles(next_tet);
+// Checks if game should end, potentially exits the program
+void check_game_over(void) {
     // Check if there is not a baked tile already, that would result in lose
     for (int i = 0; i < 8; ++i) {
         tetro_tile * t =& tet->tiles[i];
@@ -80,9 +74,22 @@ void spawn_tetromino() {
         int q = 0;
         while (!q) 
             game_over_menu(&q, game_score);
+        save_append(game_score);
         destroy();
         exit(0);
     }
+}
+
+// Creates and initialises a new tetromino and places it into the top center
+void spawn_tetromino() {
+    memcpy(tet, next_tet, sizeof(tetromino));
+    tet->pos_x = OFFSET_X + (TILE_SIZE * (TILE_W/2-1));
+    tet->pos_y = OFFSET_Y;
+    update_tetro_tiles(tet);
+    // Make new `next_tet`
+    init_tetro_tiles(next_tet);
+    update_tetro_tiles(next_tet);
+    check_game_over();
 }
 
 // Initialisations
@@ -123,13 +130,14 @@ void init() {
     init_tetro_tiles(next_tet);
     update_tetro_tiles(next_tet);
 
-    char * path = "asset/font/impact.ttf";
+    char * path = "asset/font/font.ttf";
     font = TTF_OpenFont(path, 72);
     if (!font) {
         fprintf(stderr, "Could not load path (%s)!\n", path);
         exit(1);
     }
     
+    save_init();
 
     render_init(renderer);
 
@@ -208,6 +216,7 @@ void calc_delta() {
 
 // Frees up everything allocated on the heap
 void destroy() {
+    save_destroy();
     free(tet);
     free(next_tet);
     render_destroy();

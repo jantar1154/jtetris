@@ -18,6 +18,8 @@ static SDL_Event * ev;
 void click(int * q) {
     if (!strcmp(mouse_in, "start")) {
         *q = 1;
+    } else if (!strcmp(mouse_in, "exit")) {
+        *q = 1;
     } else if (!strcmp(mouse_in, "quit")) {
         destroy();
         exit(0);
@@ -38,11 +40,7 @@ void menu_input(int * q) {
     }
 }
 
-void render_btn(
-    const char * text,
-    const int width,
-    const int height,
-    int y_offset) {
+void render_btn(const char * text, int width, int height, int y_offset) {
     SDL_Rect rect = {
         .x = WINDOW_WIDTH/2 - width/2,
         .y = y_offset,
@@ -103,7 +101,7 @@ void game_over_menu(int * q, int score) {
     sprintf(text, "Score: %i", score);
     render_text (renderer, font, 30, &white, &rect, text);
 
-    render_btn("quit", 300, 100, 400);
+    render_btn("exit", 300, 100, 400);
 
     while (SDL_PollEvent(ev)) menu_input(q);
     
