@@ -10,6 +10,14 @@ void render_next_tetromino(SDL_Renderer * r, tetromino * t);
 
 void render_tetromino(SDL_Renderer * r, tetromino * t);
 
+void render_text(
+    SDL_Renderer * r,
+    TTF_Font * font,
+    const int w,
+    SDL_Colour * colour,
+    SDL_Rect * rect,
+    const char * text);
+
 void render_level(SDL_Renderer * r, TTF_Font * font, int * lv);
 
 void render_score(SDL_Renderer * r, long * score, TTF_Font * font);

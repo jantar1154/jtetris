@@ -65,6 +65,7 @@ void render_tetromino(SDL_Renderer * r, tetromino * t) {
 void render_text(
     SDL_Renderer * r,
     TTF_Font * font,
+    const int w,
     SDL_Colour * colour,
     SDL_Rect * rect,
     const char * text) {
@@ -73,7 +74,7 @@ void render_text(
     SDL_Texture * t = SDL_CreateTextureFromSurface(r, s);
 
     int text_length = strlen(text);
-    rect->w = 22 * text_length;
+    rect->w = w * text_length;
 
     SDL_RenderCopy(r, t, NULL, rect);
 
@@ -84,9 +85,9 @@ void render_text(
 // Prints current level
 void render_level(SDL_Renderer * r, TTF_Font * font, int * lv) {
     SDL_Rect rect1 = {
-        .x = OFFSET_X + TILE_W*TILE_SIZE + 10,
-        .y = OFFSET_Y + 220,
-        .w = 380,
+        .x = OFFSET_X + TILE_W*TILE_SIZE + 5,
+        .y = OFFSET_Y + 260,
+        .w = 220,
         .h = 50
     };
     SDL_Rect rect2 = rect1;
@@ -101,20 +102,20 @@ void render_level(SDL_Renderer * r, TTF_Font * font, int * lv) {
     char text[30];
 
     rect1.x += 10;
-    snprintf(text, 30, "Level: ");
-    render_text(r, font, &clr, &rect1, text);
+    snprintf(text, 30, "Lv: ");
+    render_text(r, font, 22, &clr, &rect1, text);
 
     snprintf(text, 30, "%i", *lv);
     rect2.x = (rect2.x + rect2.w) - 22*strlen(text) - 10; // Align right
-    render_text(r, font, &clr, &rect2, text);
+    render_text(r, font, 22, &clr, &rect2, text);
 }
 
 void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     // Border rectangle
     SDL_Rect rect1 = {
-        .x = OFFSET_X + TILE_W*TILE_SIZE + 10,
-        .y = OFFSET_Y + 150,
-        .w = 380,
+        .x = OFFSET_X + TILE_W*TILE_SIZE + 5,
+        .y = OFFSET_Y + 180,
+        .w = 220,
         .h = 50
     };
     SDL_Rect rect2 = rect1;
@@ -128,12 +129,12 @@ void render_score(SDL_Renderer * r, long * score, TTF_Font * font) {
     char text[30];
 
     rect1.x += 10;
-    snprintf(text, 30, "Score: ");
-    render_text(r, font, &clr, &rect1, text);
+    // snprintf(text, 30, "Score: ");
+    // render_text(r, font, &clr, &rect1, text);
 
     snprintf(text, 30, "%li", *score);
     rect2.x = (rect2.x + rect2.w) - 22*strlen(text) - 10; // Align right
-    render_text(r, font, &clr, &rect2, text);
+    render_text(r, font, 22, &clr, &rect2, text);
 }
 
 // renders background image

@@ -11,12 +11,12 @@
 // OG Tetris has 10Hx20W tiles
 #define TILE_W 10
 #define TILE_H 20
-#define TILE_SIZE 28
-#define OFFSET_X 80
-#define OFFSET_Y 10
+#define TILE_SIZE 35
+#define OFFSET_X 20
+#define OFFSET_Y 20
 
-#define WINDOW_WIDTH 768
-#define WINDOW_HEIGHT 576
+#define WINDOW_WIDTH 600
+#define WINDOW_HEIGHT 800
 
 typedef struct {
     int top_row[4];
@@ -54,5 +54,7 @@ int rnd(const int from, const int to);
 void change_limit(void);
 
 void add_level(void);
+
+void destroy(void);
 
 #endif // MAIN_H

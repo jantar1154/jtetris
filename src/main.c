@@ -2,6 +2,7 @@
 #include "h/input.h"
 #include "h/render.h"
 #include "h/tetromino.h"
+#include "h/menu.h"
 #include <SDL2/SDL_ttf.h>
 
 SDL_Window * window;
@@ -70,6 +71,18 @@ void spawn_tetromino() {
     // Make new `next_tet`
     init_tetro_tiles(next_tet);
     update_tetro_tiles(next_tet);
+    // Check if there is not a baked tile already, that would result in lose
+    for (int i = 0; i < 8; ++i) {
+        tetro_tile * t =& tet->tiles[i];
+        if (!t->active) continue;
+        game_tile * gt = get_gtile(&field, t, 0, 0);
+        if (!gt->has_tetro_tile) continue;
+        int q = 0;
+        while (!q) 
+            game_over_menu(&q, game_score);
+        destroy();
+        exit(0);
+    }
 }
 
 // Initialisations
@@ -99,6 +112,7 @@ void init() {
         -1,
         renderer_flags
     );
+
     last = SDL_GetPerformanceCounter();
     internal_clock = 0.0f;
     tet = malloc(sizeof(tetromino));
@@ -118,6 +132,8 @@ void init() {
     
 
     render_init(renderer);
+
+    menu_init(renderer, &event, font);
 
     // init `game_field`
     init_game_field();
@@ -204,12 +220,15 @@ void destroy() {
 int main () {
     init();
 
-    int quit = 0;
-
+    int q = 0;
+    while (!q) {
+        main_menu(&q);
+    }
+    q = 0;
     // Game loop
-    while (!quit) {
+    while (!q) {
         while (SDL_PollEvent(&event))
-            handle_input(renderer, &field, tet, &event, &quit, &ff);
+            handle_input(renderer, &field, tet, &event, &q, &ff);
         calc_delta();
         update();
         render();
